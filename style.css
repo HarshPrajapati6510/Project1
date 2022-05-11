@@ -6,7 +6,7 @@
 
 /*Global */
 body{
-    font-family: Merriweather,sans-serif;
+    font-family: "Merriweather",sans-serif;
     background-color: #ebf2ff;
     overflow-x: hidden;
 }
@@ -21,6 +21,7 @@ body{
     padding: 12px;
     border: none;
     border-radius: 6px;
+    cursor: pointer;
 }
 .navbar{
     display: flex;
@@ -36,17 +37,63 @@ body{
 }
 .container{
     width: 100%;
-    margin: 0 auto;
-    padding: 0 15px;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
 }
 .hero_container{
     width: 100%;
 }
 .hero_image_container{
     width: 100%;
+    position: relative;
 }
 .hero_image{
     width:100%;
+    position:absolute;
+    
+    
+}
+.hero_image_shape{
+    position: absolute;
+    z-index: -2;
+    
+}
+.hero_text{
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+    color: #1d3557;
+    font-weight: 900;
+}
+/*Menu Styles*/
+.eplore_menu_container{
+    margin-top: 50px;
+}
+.explore_menu_text{
+    font-size: 1.5rem;
+    line-height: 2rem;
+    color: #1d3557;
+    font-weight: 900;
+    margin: 20px 0;
+    text-align: center;
+}
+.food_menu_card{
+    width: 100%;
+    background-color: #fff;
+    margin-bottom: 15px;
+    border-radius: 8px;
+}
+.food_image{
+    width: 100%;
+    border-radius: 8px 8px 0 0;
+}
+.food_menu_card_description{
+    padding: 20px;
+}
+.explore_menu_view_more{
+    display: flex;
+    justify-content: center;
 }
 
 @media (min-width:768px){
@@ -58,7 +105,7 @@ body{
         width: 150px;
     }
     .button_primary{
-        padding: 20px;
+        padding:12px 20px;
         font-size: 20px;
     }
     .hero_container{
@@ -68,18 +115,23 @@ body{
         justify-content: space-between;
         gap: 10px;
     }
-
+    .hero_image{
+        padding-top: 35px;
+    }
+    
 }
 @media(min-width:1020px){
     .container{
-        max-width: 1010px;
+        max-width: 1140px;
     }
-    .hero_image_container{
-        width: 500px;
-        height: 500px;
+    .hero_text{
+        font-size: 3rem;
+        line-height: 1;
     }
-
 }
 @media(min-width:1400px){
+    .container{
+        max-width: 1250px;
+    }
 
 }
