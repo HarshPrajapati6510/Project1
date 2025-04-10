@@ -1,0 +1,41 @@
+<div class="w-25 p-3">
+  <h3>Add Your trip</h3>
+  <div class="d-flex justify-between align-center gap-3">
+
+    <div class="mb-3">
+      <label for="startPoint" class="form-label">Start Point</label>
+      <input type="text" [(ngModel)]="startPoint" class="form-control" id="startPoint" placeholder="Starting Place">
+    </div>
+
+    <div class="mb-3">
+      <label for="endPoint" class="form-label">End Point</label>
+      <input type="text" [(ngModel)]="endPoint" class="form-control" id="endPoint" placeholder="Ending Place">
+    </div>
+
+  </div>
+
+  <button type="button" class="btn btn-primary" (click)="addTrip()">Add</button>
+  
+</div>
+
+<div class="p-3">
+  <div class="">
+    <div class="d-flex align-center ">
+      @for (trip of tripList;let i=$index; track i) {
+        <div style="margin-right: 20%;"  id="tripPoint{{i}}">
+         <p> <i style="font-size: 11px;" class="bi bi-circle-fill m-2"></i></p>
+          <p style="font-size: 9px;">{{ trip.start | uppercase | slice:0:3 }} - {{ trip.end | uppercase | slice:0:3  }}</p>
+        </div>
+        <!-- @if (tripList.length>1) {
+          <div id="end{{i}}" > 
+            <p><i style="font-size: 11px;" class="bi bi-circle-fill m-2"></i></p>
+            <p style="font-size: 9px;">{{ trip.start | slice:0:3 | uppercase }} - {{ endPoint | slice:0:3 | uppercase }}</p>
+          </div>
+        } -->
+      }
+    </div>
+  </div>
+
+</div>
+
+<router-outlet />
