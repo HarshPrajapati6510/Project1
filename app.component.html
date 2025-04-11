@@ -14,28 +14,38 @@
 
   </div>
 
-  <button type="button" class="btn btn-primary" (click)="addTrip()">Add</button>
-  
+  <div class="d-flex gap-2">
+    <button type="button" class="btn btn-primary" (click)="addTrip()">Add</button>
+  </div>
+
 </div>
 
 <div class="p-3">
   <div class="">
-    <div class="d-flex align-center ">
+    <div class="d-flex align-items-center trip-container">
       @for (trip of tripList;let i=$index; track i) {
-        <div style="margin-right: 20%;"  id="tripPoint{{i}}">
-         <p> <i style="font-size: 11px;" class="bi bi-circle-fill m-2"></i></p>
-          <p style="font-size: 9px;">{{ trip.start | uppercase | slice:0:3 }} - {{ trip.end | uppercase | slice:0:3  }}</p>
-        </div>
-        <!-- @if (tripList.length>1) {
-          <div id="end{{i}}" > 
-            <p><i style="font-size: 11px;" class="bi bi-circle-fill m-2"></i></p>
-            <p style="font-size: 9px;">{{ trip.start | slice:0:3 | uppercase }} - {{ endPoint | slice:0:3 | uppercase }}</p>
+        <div class="trip-point" [ngClass]="{'trip-point-leval-2':trip.leval==2}" id="tripPoint{{i}}">
+          <div class="point-circle">
+            <i class="bi bi-circle-fill"></i>
           </div>
-        } -->
+          <p class="point-label">{{ trip.start | uppercase | slice:0:3 }} - {{ trip.end | uppercase | slice:0:3 }}</p>
+        </div>
       }
     </div>
   </div>
 
+  @if (tripList.length > 0) {
+    <div class="mt-4">
+      <h4>Trip List:</h4>
+      <ul class="list-group">
+        @for (trip of tripList;let i=$index; track i) {
+          <li class="list-group-item">
+            Trip {{i+1}}: {{ trip.start }} → {{ trip.end }}
+          </li>
+        }
+      </ul>
+    </div>
+  }
 </div>
 
 <router-outlet />

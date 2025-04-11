@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import {MatTableModule} from '@angular/material/table';
+// import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+// import {MatTableModule} from '@angular/material/table';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 declare var LeaderLine: any;
@@ -23,7 +23,7 @@ const ELEMENT_DATA:any[] = [
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet,MatTableModule,FormsModule,CommonModule],
+  imports: [RouterOutlet,FormsModule,CommonModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
@@ -34,7 +34,7 @@ export class AppComponent implements AfterViewInit{
   dataSource = ELEMENT_DATA;
   @ViewChild('startEl') startEl!: ElementRef;
   @ViewChild('endEl') endEl!: ElementRef;
-  line:any;
+  lines: any[] = []; // Array to store multiple lines
   tripList:any[]=[] ;
   startPoint:string=''
   endPoint:string=''
@@ -58,50 +58,30 @@ export class AppComponent implements AfterViewInit{
   //     }
   //   );
   }
-  loginWithGoogle(){
-    const auth = getAuth();
-signInWithPopup(auth, new GoogleAuthProvider)
-  .then((result) => {
-    console.log('result=======>',result);
-    
-    // This gives you a Google Access Token. You can use it to access the Google API.
-    const credential = GoogleAuthProvider.credentialFromResult(result);
-    console.log('credential=======>',credential);
-    const token = credential?.accessToken;
-    console.log('token=======>',token);
-    // The signed-in user info.
-    const user = result.user;
-    console.log('user=======>',user);
-    
-    // IdP data available using getAdditionalUserInfo(result)
-    // ...
-  }).catch((error) => {
-    // Handle Errors here.
-    const errorCode = error.code;
-    const errorMessage = error.message;
-    // The email of the user's account used.
-    const email = error.customData.email;
-    // The AuthCredential type that was used.
-    const credential = GoogleAuthProvider.credentialFromError(error);
-    // ...
-  });
-  }
+
+
 
   addTrip(){
-    if (this.startPoint&&this.endPoint) {
-      let tripData:any={
-        start:this.startPoint,
-        end:this.endPoint
+    if (this.startPoint && this.endPoint) {
+      let tripData:any = {
+        start: this.startPoint,
+        end: this.endPoint
       }
-      if (this.tripList.length>0) {
-        tripData={...tripData,...this.checkTripCondition(tripData)};
+
+      if (this.tripList.length > 0) {
+        tripData = {...tripData, ...this.checkTripCondition(tripData)};
       }
-      this.tripList.push(tripData)
-      this.addDynamicLine()
-      this.startPoint=''
-      this.endPoint=''
-      console.log('trip list===>',this.tripList);
-      
+
+      this.tripList.push(tripData);
+
+      // Only add a line if there are at least 2 points
+      if (this.tripList.length > 1) {
+        this.addDynamicLine();
+      }
+
+      this.startPoint = '';
+      this.endPoint = '';
+      console.log('trip list===>', this.tripList);
     }
   }
 
@@ -111,32 +91,107 @@ signInWithPopup(auth, new GoogleAuthProvider)
     console.log('tripData',tripData);
     console.log('tripList',this.tripList[lastTripIndex]);
     if (this.startPoint==this.tripList[lastTripIndex].end) {
-      tempData={leval:1,color:'yellow',path:'straight', endPlug: 'disc'}
-      console.log('asdfdasfasdfsda',tempData);
-    }else if(!(this.startPoint==this.tripList[lastTripIndex].end)){
-      tempData={leval:1,color:'yellow',path:'straight', endPlug: 'arrow'}
-    }else if(this.startPoint==this.tripList[lastTripIndex].start && this.endPoint==this.tripList[lastTripIndex].end){
-      tempData={leval:2,color:'yellow',path:'fluid', endPlug: 'behind'}
+      tempData={leval:1,color:'red',path:'straight', endPlug: 'disc'}
+      console.log('continue====>>1',tempData);
+    }
+    if(!(this.endPoint==this.tripList[lastTripIndex].start)){
+      tempData={leval:1,color:'red',path:'straight', endPlug: 'arrow'}
+      console.log('not continued====>>1',tempData);
+    }
+    if(this.startPoint==this.tripList[lastTripIndex].start && this.endPoint==this.tripList[lastTripIndex].end){
+      this.tripList[lastTripIndex].leval=2;
+      this.tripList[lastTripIndex].path='fluid';
+      this.tripList[lastTripIndex].endPlug='behind';
+      tempData={leval:2,color:'red',path:'straight', endPlug: 'behind'}
     }
     return tempData
   }
 
   addDynamicLine(){
-    if (this.tripList.length>1) {
-      const currentIndex=this.tripList.length-1
-      const start = document.getElementById(`tripPoint${currentIndex-1}`);
-      const end = document.getElementById(`tripPoint${currentIndex}`);
-        this.line = new LeaderLine(
-          start,end,
-          {
-            color: this.tripList[currentIndex].color,
-            endPlug: this.tripList[currentIndex].endPlug,
-            path: this.tripList[currentIndex].path
+    if (this.tripList.length > 1) {
+      const currentIndex = this.tripList.length - 1;
+      const prevIndex = currentIndex - 1;
+
+      console.log('Drawing line between trip points:', prevIndex, 'and', currentIndex);
+
+      setTimeout(() => {
+        const start = document.getElementById(`tripPoint${prevIndex}`);
+        const end = document.getElementById(`tripPoint${currentIndex}`);
+
+        if (!start || !end) {
+          console.error('Could not find start or end elements:',
+                      `tripPoint${prevIndex}`, `tripPoint${currentIndex}`);
+          return;
+        }
+
+        console.log('Creating line with:', start, end);
+
+        try {
+          // Find circle elements inside the trip point
+          const startCircle = start.querySelector('.point-circle');
+          const endCircle = end.querySelector('.point-circle');
+
+          if (!startCircle || !endCircle) {
+            console.error('Could not find circle elements inside trip points');
+            return;
           }
-        );
-      
+
+          // Get trip data and styles
+          const tripData = this.tripList[currentIndex];
+          const lineColor = tripData.color || 'blue';
+          const lineEndPlug = tripData.endPlug || 'arrow';
+          const linePath = tripData.path || 'straight';
+
+          console.log('Line styles:', lineColor, lineEndPlug, linePath);
+
+          const newLine = new LeaderLine(
+            startCircle,
+            endCircle,
+            {
+              color: lineColor,
+              endPlug: lineEndPlug,
+              path: linePath,
+              startSocket: 'right',
+              endSocket: 'left',
+              size: 2
+            }
+          );
+
+          // Store the line in the array
+          this.lines.push(newLine);
+
+        } catch (error) {
+          console.error('Error creating LeaderLine:', error);
+        }
+      }, 100); // Small delay to ensure DOM elements are rendered
+    } else {
+      console.log('Not enough trip points to draw a line');
     }
   }
 
+  // Add a method to clear all lines if needed
+  clearAllLines() {
+    if (this.lines.length > 0) {
+      this.lines.forEach(line => {
+        if (line) {
+          line.remove();
+        }
+      });
+      this.lines = [];
+    }
+  }
+
+  // Handle component cleanup
+  ngOnDestroy() {
+    this.clearAllLines();
+  }
+
+  // Reset all trips and lines
+  resetTrips() {
+    this.clearAllLines();
+    this.tripList = [];
+    this.startPoint = '';
+    this.endPoint = '';
+  }
 
 }

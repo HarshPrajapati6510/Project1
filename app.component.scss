@@ -1,4 +1,69 @@
-table {
-    width: 100%;
+.trip-container {
+  height: 150px;
+  margin: 40px 0;
+  position: relative;
+}
+
+.trip-point{
+  display: inline-block;
+  position: relative;
+  text-align: center;
+  margin-right: 150px;
+
+  &:last-child {
+    margin-right: 0;
   }
-  
+}
+
+.trip-point-leval-2{
+  margin-bottom: 150px;
+  // margin-right: 150px;
+
+
+  // &:last-child {
+  //   margin-right: 0;
+  // }
+}
+
+
+.point-circle {
+  width: 20px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  // border-radius: 50%;
+  // background-color: #f8f9fa;
+  // border: 1px solid #dee2e6;
+  // box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+  i {
+    font-size: 12px;
+    // color: #007bff;
+  }
+}
+
+.point-label {
+  font-size: 12px;
+  margin-top: 8px;
+  text-align: center;
+  width: 100%;
+  font-weight: 500;
+}
+
+// Fix LeaderLine z-index issues
+:host {
+  position: relative;
+  z-index: 1;
+}
+
+::ng-deep {
+  svg.leader-line {
+    z-index: 5 !important;
+  }
+
+  .leader-line-plug-marker {
+    fill: #007bff;
+  }
+}
